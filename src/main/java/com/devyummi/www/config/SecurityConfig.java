@@ -37,6 +37,8 @@ public class SecurityConfig {
 
 		http
 			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/user/join").permitAll()
+				.requestMatchers("/user/update/**").hasRole("USER")
 				.requestMatchers("/**").permitAll());
 
 		http
