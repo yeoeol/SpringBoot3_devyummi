@@ -3,6 +3,7 @@ package com.devyummi.www.domain.user.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,6 +27,28 @@ public class UserService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	// 유저 접근 권한 체크
+	private Boolean isAccess(String username) {
+		// 현재 로그인 되어 있는 유저의 username
+		String sessionUsername = SecurityContextHolder.getContext().getAuthentication()
+			.getName();
+		// 현재 로그인 되어 있는 유저의 role
+		String sessionRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+			.iterator().next().getAuthority();
+
+		// 수직적으로 ADMIN이면 무조건 접근 가능
+		if ("ROLE_ADMIN".equals(sessionRole)) {
+			return true;
+		}
+
+		// 수평적으로 특정 행위를 수행할 username에 대해 세션(현재 로그인한) username과 같은지
+		if (username.equals(sessionUsername)) {
+			return true;
+		}
+
+		return false;
+	}
 
 	// 유저 한 명 생성
 	@Transactional
