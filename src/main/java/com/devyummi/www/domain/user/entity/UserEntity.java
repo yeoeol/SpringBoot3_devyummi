@@ -24,5 +24,5 @@ public class UserEntity {
 	private String nickname;
 
 	@Enumerated(EnumType.STRING)
-	private UserRoleType userRoleType;
+	private UserRoleType role;
 }
